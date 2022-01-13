@@ -9,11 +9,11 @@ class FSMOrder(models.Model):
 
     @api.model
     def _default_warehouse_id(self):
-        company = self.env.user.company_id.id
-        warehouse_ids = self.env["stock.warehouse"].search(
-            [("company_id", "=", company)], limit=1
+        company = self.env.company
+        warehouse_id = self.env["stock.warehouse"].search(
+            [("company_id", "=", company.id)], limit=1
         )
-        return warehouse_ids and warehouse_ids.id
+        return warehouse_id and warehouse_id.id
 
     @api.model
     def _get_move_domain(self):
