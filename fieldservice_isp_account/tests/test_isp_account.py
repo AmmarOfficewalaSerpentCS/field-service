@@ -3,10 +3,10 @@
 
 from odoo import fields
 from odoo.exceptions import ValidationError
-from odoo.tests import SavepointCase
+from odoo.tests import TransactionCase
 
 
-class FSMISPAccountCase(SavepointCase):
+class FSMISPAccountCase(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super(FSMISPAccountCase, cls).setUpClass()

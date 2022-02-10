@@ -36,10 +36,7 @@ class FSMOrder(models.Model):
     def _compute_employee(self):
         user = self.env["res.users"].browse(self.env.uid)
         for order in self:
-            if user.employee_ids:
-                order.employee = True
-            else:
-                order.employee = False
+            order.employee = True if user.employee_ids else False
 
     @api.depends("employee_timesheet_ids", "contractor_cost_ids")
     def _compute_total_cost(self):
@@ -131,9 +128,8 @@ class FSMOrder(models.Model):
 
     def account_confirm(self):
         for order in self:
-            contractor = order.person_id.partner_id.supplier_rank
             if order.contractor_cost_ids:
-                if contractor:
+                if order.person_id.partner_id.supplier_rank:
                     order.create_bills()
                     order.account_stage = "confirmed"
                 else:
@@ -215,10 +211,9 @@ class FSMOrder(models.Model):
                 date=False,
                 uom_id=False,
             )
-            template = line.product_id.product_tmpl_id
-            accounts = template.get_product_accounts()
+            accounts = line.product_id.product_tmpl_id.get_product_accounts()
             account = accounts["income"]
-            taxes = template.taxes_id
+            taxes = line.product_id.product_tmpl_id.taxes_id
             tax_ids = fpos.map_tax(taxes)
             invoice_line_vals.append(
                 (
