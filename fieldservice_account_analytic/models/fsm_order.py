@@ -37,8 +37,7 @@ class FSMOrder(models.Model):
                         ]
                     }
                 }
-            else:
-                return {"domain": {"customer_id": [], "location_id": []}}
+            return {"domain": {"customer_id": [], "location_id": []}}
         else:
             if self.customer_id:
                 return {
@@ -46,13 +45,13 @@ class FSMOrder(models.Model):
                         "location_id": [("partner_id", "=", self.customer_id.id)]
                     }
                 }
-            else:
-                return {"domain": {"location_id": [], "customer_id": []}}
+            return {"domain": {"location_id": [], "customer_id": []}}
 
     @api.onchange("customer_id")
     def _onchange_customer_id_location(self):
-        if self.customer_id:
-            self.location_id = self.customer_id.service_location_id
+        self.location_id = (
+            self.customer_id.service_location_id if self.customer_id else False
+        )
 
     def write(self, vals):
         res = super(FSMOrder, self).write(vals)

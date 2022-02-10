@@ -13,6 +13,5 @@ class ResCompany(models.Model):
 
     @api.onchange("fsm_filter_location_by_contact")
     def onchange_fsm_filter_location_by_contact(self):
-        fso_ids = self.env["fsm.order"].search([])
-        for fso_id in fso_ids:
+        for fso_id in self.env["fsm.order"].search([]):
             fso_id._onchange_location_id_customer_account()
